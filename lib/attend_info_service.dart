@@ -39,13 +39,14 @@ class AttendInfoService {
 
   Future<AttendInfo> upsert(AttendInfo value) async {
     final box = await _openBoxIfClosed();
-    await box.put(value.id, value);
+    await box.put(value.key, value);
     return value;
   }
 
   Future<AttendInfo> delete(AttendInfo value) async {
+    print('remove id: ${value.key}');
     final box = await _openBoxIfClosed();
-    await box.delete(value.id);
+    await box.delete(value.key);
     return value;
   }
 

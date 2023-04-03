@@ -3,7 +3,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 part 'attend_info.g.dart';
 
 @HiveType(typeId: 1)
-class AttendInfo {
+class AttendInfo extends HiveObject {
   @HiveField(0)
   int? id;
 
