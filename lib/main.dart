@@ -112,6 +112,41 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           Flexible(
+            flex: 2,
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width * 0.8,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    '退社時間: ',
+                    style: Theme.of(context).textTheme.headline5,
+                  ),
+                  FutureBuilder(
+                    future: _hasWorked(),
+                    builder: ((context, AsyncSnapshot<AttendInfo?> snapshot) {
+                      if (snapshot.data == null) {
+                        return Text('未入力',
+                            style: Theme.of(context).textTheme.headline5);
+                      }
+
+                      final formatter = DateFormat('HH:mm');
+                      final str = snapshot.data?.endAt != null
+                          ? formatter.format(snapshot.data!.endAt!)
+                          : '未入力';
+
+                      return Text(
+                        str,
+                        style: Theme.of(context).textTheme.headline5,
+                      );
+                    }),
+                  )
+                  // Text()
+                ],
+              ),
+            ),
+          ),
+          Flexible(
             flex: 8,
             child: Center(
               child: FutureBuilder(
