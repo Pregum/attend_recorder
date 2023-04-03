@@ -17,6 +17,12 @@ class AttendInfoService {
     return attendInfo;
   }
 
+  Future<List<AttendInfo>> getAll() async {
+    final box = await _openBoxIfClosed();
+    final all = box.values.toList();
+    return all;
+  }
+
   Future<AttendInfo?> getByStartAt(DateTime startAt) async {
     final box = await _openBoxIfClosed();
     var attendInfo =
