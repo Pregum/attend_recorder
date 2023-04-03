@@ -12,7 +12,7 @@ class AttendInfo extends HiveObject {
   @HiveField(2)
   late final DateTime startAt;
   @HiveField(3)
-  late DateTime endAt;
+  DateTime? endAt;
   @HiveField(4)
   bool isPunchClock;
 
@@ -25,6 +25,6 @@ class AttendInfo extends HiveObject {
   }) {
     this.createdAt = createdAt ?? DateTime.now();
     this.startAt = startAt ?? DateTime.now();
-    this.endAt = endAt ?? DateTime.now();
+    // this.endAt = endAt ?? DateTime.now();
   }
 }

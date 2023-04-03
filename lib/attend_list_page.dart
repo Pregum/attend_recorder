@@ -45,7 +45,7 @@ class _AttendListPageState extends State<AttendListPage> {
                   ? timeFormatter.format(item!.startAt)
                   : '';
               final endTimeStr =
-                  item?.endAt != null ? timeFormatter.format(item!.endAt) : '';
+                  item?.endAt != null ? timeFormatter.format(item!.endAt!) : '';
               return Dismissible(
                 key: ValueKey<int>(item?.id ?? -1),
                 background: Container(),
