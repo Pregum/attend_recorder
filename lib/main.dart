@@ -1,6 +1,13 @@
-import 'package:flutter/material.dart';
+import 'dart:math';
 
-void main() {
+import 'package:attendance_recoder/attend_info.dart';
+import 'package:attendance_recoder/attend_info_service.dart';
+import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+
+Future<void> main() async {
+  await Hive.initFlutter();
+  Hive.registerAdapter(AttendInfoAdapter());
   runApp(const MyApp());
 }
 
@@ -14,7 +21,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'attend card'),
     );
   }
 }
@@ -29,12 +36,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
+  Future<AttendInfo?> _hasWorked() async {
+    final ret = await AttendInfoService.ins.getByStartAt(DateTime.now());
+    return ret;
   }
 
   @override
@@ -47,20 +51,82 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
+            FutureBuilder(
+              builder:
+                  (BuildContext context, AsyncSnapshot<AttendInfo?> snapshot) {
+                if (snapshot.data != null) {
+                  var targetAttendInfo = snapshot.data!;
+                  if (targetAttendInfo.isPunchClock) {
+                    return SizedBox(
+                      height: min(MediaQuery.of(context).size.height * 0.3,
+                          MediaQuery.of(context).size.width * 0.4),
+                      width: min(MediaQuery.of(context).size.height * 0.3,
+                          MediaQuery.of(context).size.width * 0.4),
+                      child: const ElevatedButton(
+                        onPressed: null,
+                        child: Text('退勤済みです！'),
+                      ),
+                    );
+                  } else {
+                    return SizedBox(
+                      height: min(MediaQuery.of(context).size.height * 0.3,
+                          MediaQuery.of(context).size.width * 0.4),
+                      width: min(MediaQuery.of(context).size.height * 0.3,
+                          MediaQuery.of(context).size.width * 0.4),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            minimumSize: const Size(100, 100),
+                            shape: const CircleBorder()),
+                        onPressed: () async {
+                          targetAttendInfo.endAt = DateTime.now();
+                          targetAttendInfo.isPunchClock = true;
+                          await AttendInfoService.ins.upsert(targetAttendInfo);
+                          if (mounted) {
+                            const sb = SnackBar(content: Text('退勤しました！'));
+                            ScaffoldMessenger.of(context).showSnackBar(sb);
+                            setState(() {});
+                          }
+                        },
+                        child: Text(
+                          '退勤',
+                          style: Theme.of(context).textTheme.displayMedium,
+                        ),
+                      ),
+                    );
+                  }
+                } else {
+                  return SizedBox(
+                    height: min(MediaQuery.of(context).size.height * 0.3,
+                        MediaQuery.of(context).size.width * 0.4),
+                    width: min(MediaQuery.of(context).size.height * 0.3,
+                        MediaQuery.of(context).size.width * 0.4),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(100, 100),
+                        shape: const CircleBorder(),
+                      ),
+                      onPressed: () async {
+                        final newAttendInfo = AttendInfo(isPunchClock: false);
+                        await AttendInfoService.ins.add(newAttendInfo);
+                        if (mounted) {
+                          const sb = SnackBar(content: Text('出勤しました！'));
+                          ScaffoldMessenger.of(context).showSnackBar(sb);
+                          setState(() {});
+                        }
+                      },
+                      child: Text(
+                        '出勤',
+                        style: Theme.of(context).textTheme.displayMedium,
+                      ),
+                    ),
+                  );
+                }
+              },
+              future: _hasWorked(),
+              initialData: null,
             ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
       ),
     );
   }
