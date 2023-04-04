@@ -20,7 +20,7 @@ class AttendInfo extends HiveObject {
     this.id,
     createdAt,
     startAt,
-    endAt,
+    this.endAt,
     this.isPunchClock = false,
   }) {
     this.createdAt = createdAt ?? DateTime.now();

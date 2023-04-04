@@ -20,7 +20,7 @@ class AttendInfoAdapter extends TypeAdapter<AttendInfo> {
       id: fields[0] as int?,
       createdAt: fields[1] as dynamic,
       startAt: fields[2] as dynamic,
-      endAt: fields[3] as dynamic,
+      endAt: fields[3] as DateTime?,
       isPunchClock: fields[4] as bool,
     );
   }

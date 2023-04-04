@@ -160,9 +160,12 @@ class _MyHomePageState extends State<MyHomePage> {
                             MediaQuery.of(context).size.width * 0.4),
                         width: min(MediaQuery.of(context).size.height * 0.3,
                             MediaQuery.of(context).size.width * 0.4),
-                        child: const ElevatedButton(
+                        child: ElevatedButton(
                           onPressed: null,
-                          child: Text('退勤済みです！'),
+                          child: Text(
+                            '退勤済み',
+                            style: Theme.of(context).textTheme.headline5,
+                          ),
                         ),
                       );
                     } else {
